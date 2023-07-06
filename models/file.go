@@ -10,6 +10,7 @@ type FileMetadata struct {
 	Id             interface{} `bson:"_id"`
 	FileName       string      `bson:"name"`
 	FileSize       int64       `bson:"size"`
+	CurrentSize    int64       `bson:"currentSize"`
 	IsDirectory    bool        `bson:"isDirectory"`
 	Path           string      `bson:"path"`
 	Fragments      []Fragment

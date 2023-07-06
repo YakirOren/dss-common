@@ -87,7 +87,7 @@ func (db *MongoDataStore) AppendFragment(ctx context.Context, id string, fragmen
 	_, err = db.FilesCollection.UpdateOne(
 		ctx,
 		bson.M{"_id": hex},
-		bson.M{"$push": bson.M{"fragments": fragment}, "$inc": bson.M{"size": fragment.Size}},
+		bson.M{"$push": bson.M{"fragments": fragment}, "$inc": bson.M{"currentSize": fragment.Size}},
 	)
 
 	return err
