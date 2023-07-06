@@ -28,17 +28,13 @@ func GetConnectionString(username string, password string, address string) strin
 }
 
 type MongoConfig struct {
-	MongoUsername       string `env:",required,notEmpty"`
-	MongoPassword       string `env:",required,notEmpty"`
-	MongoURL            string `env:"MONGO_URL,required,notEmpty"`
-	MongoFileCollection string `env:",required,notEmpty"`
-	MongoDBName         string `env:",required,notEmpty"`
+	MongoConnectionString string `env:",required,notEmpty"`
+	MongoFileCollection   string `env:",required,notEmpty"`
+	MongoDBName           string `env:",required,notEmpty"`
 }
 
 func NewMongoDataStore(config *MongoConfig) (*MongoDataStore, error) {
-	connection := GetConnectionString(config.MongoUsername, config.MongoPassword, config.MongoURL)
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(connection))
+	client, err := mongo.NewClient(options.Client().ApplyURI(config.MongoConnectionString))
 	if err != nil {
 		return nil, err
 	}
