@@ -89,9 +89,14 @@ func (db *MongoDataStore) AppendFragment(ctx context.Context, id string, fragmen
 	return err
 }
 
-func (db *MongoDataStore) GetMetadataByID(ctx context.Context, id interface{}) (*models.FileMetadata, bool) {
+func (db *MongoDataStore) GetMetadataByID(ctx context.Context, id string) (*models.FileMetadata, bool) {
+	hex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, false
+	}
+
 	output := models.FileMetadata{}
-	filter := bson.D{{"_id", id}}
+	filter := bson.D{{"_id", hex}}
 
 	if err := db.FilesCollection.FindOne(ctx, filter).Decode(&output); err != nil {
 		return nil, false
@@ -100,12 +105,26 @@ func (db *MongoDataStore) GetMetadataByID(ctx context.Context, id interface{}) (
 	return &output, true
 }
 
+func (db *MongoDataStore) Delete(ctx context.Context, id string) bool {
+	hex, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return false
+	}
+
+	filter := bson.D{{"_id", hex}}
+
+	if _, err := db.FilesCollection.DeleteOne(ctx, filter); err != nil {
+		return false
+	}
+
+	return true
+}
+
 func (db *MongoDataStore) GetMetadataByPath(ctx context.Context, path string) (*models.FileMetadata, bool) {
 	output := models.FileMetadata{}
 
 	basePath := filepath.Dir(path)
 	name := filepath.Base(path)
-
 	filter := bson.D{{"path", basePath}, {"name", name}}
 
 	if err := db.FilesCollection.FindOne(ctx, filter).Decode(&output); err != nil {

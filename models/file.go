@@ -4,16 +4,20 @@ import (
 	"io/fs"
 	"os"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type FileMetadata struct {
-	Id             interface{} `bson:"_id"`
-	FileName       string      `bson:"name"`
-	FileSize       int64       `bson:"size"`
-	CurrentSize    int64       `bson:"currentSize"`
-	IsDirectory    bool        `bson:"isDirectory"`
-	Path           string      `bson:"path"`
+	Id             primitive.ObjectID `bson:"_id"`
+	CreationTime   int64              `bson:"creationTime"`
+	FileName       string             `bson:"name"`
+	FileSize       int64              `bson:"size"`
+	CurrentSize    int64              `bson:"currentSize"`
+	IsDirectory    bool               `bson:"isDirectory"`
+	Path           string             `bson:"path"`
 	Fragments      []Fragment
+	Tags           []string
 	TotalFragments int
 	IsHidden       bool
 }
@@ -45,7 +49,7 @@ func (f FileMetadata) Mode() fs.FileMode {
 }
 
 func (f FileMetadata) ModTime() time.Time {
-	return time.Now()
+	return time.Unix(f.CreationTime, 0)
 }
 
 func (f FileMetadata) Sys() interface{} {

@@ -12,5 +12,6 @@ type DataStore interface {
 	GetMetadataByPath(ctx context.Context, path string) (*models.FileMetadata, bool)
 	ListFiles(ctx context.Context, path string) ([]models.FileMetadata, error)
 	UpdateField(ctx context.Context, id string, field string, value interface{}) error
-	GetMetadataByID(ctx context.Context, id interface{}) (*models.FileMetadata, bool)
+	GetMetadataByID(ctx context.Context, id string) (*models.FileMetadata, bool)
+	Delete(ctx context.Context, id string) bool
 }
